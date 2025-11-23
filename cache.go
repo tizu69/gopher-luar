@@ -184,6 +184,10 @@ func getMetatable(L *lua.LState, vtype reflect.Type) *lua.LTable {
 	mt.RawSetString("__metatable", lua.LString("gopher-luar"))
 	mt.RawSetString("methods", methods)
 
+	if process := config.Metatable; process != nil {
+		process(L, vtype, mt, false)
+	}
+
 	config.regular[vtype] = mt
 	return mt
 }
@@ -199,6 +203,10 @@ func getTypeMetatable(L *lua.LState, t reflect.Type) *lua.LTable {
 	mt.RawSetString("__call", L.NewFunction(typeCall))
 	mt.RawSetString("__eq", L.NewFunction(typeEq))
 	mt.RawSetString("__metatable", lua.LString("gopher-luar"))
+
+	if process := config.Metatable; process != nil {
+		process(L, t, mt, true)
+	}
 
 	config.types = mt
 	return mt

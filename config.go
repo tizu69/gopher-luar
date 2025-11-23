@@ -26,6 +26,16 @@ type Config struct {
 	//   - the method name and its name with a lowercase first letter
 	MethodNames func(t reflect.Type, m reflect.Method) []string
 
+	// The metatable post-processor function. This gets run last, after the
+	// [default implementation] is done. If nil, skipped. You may use this to
+	// provide custom metamethods or the like for specific Go types.
+	//
+	// If the constructor parameter is true, the metatable is being created for
+	// the global constructor metatable; as such, this will only be called once.
+	//
+	// [default implementation]: https://github.com/layeh/gopher-luar/blob/master/cache.go#L92
+	Metatable func(L *lua.LState, t reflect.Type, mt *lua.LTable, constructor bool) *lua.LTable
+
 	regular map[reflect.Type]*lua.LTable
 	types   *lua.LTable
 }
